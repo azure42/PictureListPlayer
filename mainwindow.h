@@ -3,8 +3,7 @@
 
 #include <QMainWindow>
 #include "piccache.h"
-#include "QTimer"
-#include <QTime>
+#include <QTimer>
 #include <QLabel>
 #include <QDir>
 #include <QDebug>
@@ -32,8 +31,9 @@ private slots:
     void on_playButton_clicked();
     void on_timeSlider_sliderMoved(int position);
 
+    void on_detailButton_clicked();
+
 private:
-    QTime tmpTime;
     Ui::MainWindow *ui;
     QTimer *videoTimer;
     QTimer *msgTimer;
@@ -43,8 +43,9 @@ private:
     QFile *infoFile;
     bool playFlag,endFlag;//playFlag表示暂停/播放，endflag表示是否到达文件末尾（逐帧播放功能）
     QPixmap red,gray;
-    int timeCount,flagCount;
     QLabel newLabel;
+    QString matStr;
+
 };
 
 #endif // MAINWINDOW_H

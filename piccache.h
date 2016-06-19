@@ -7,8 +7,9 @@
 #include <QList>
 struct pic
 {
-    QPixmap pixmap;
-    bool flag;
+    QPixmap pixmap;//jpg文件预先处理为位图，提高性能
+    bool uavFlag;//该帧是否检测到无人机
+    int uavNum;//第几次检测到无人机，无则为-1
 };
 
 class PicCache : public QThread
@@ -19,6 +20,7 @@ public:
     QList<pic> *picList;
 
 private:
+    int uavCount;
     QDir *dir;
     int readCount;
     QFileInfoList fileList,newFileList;

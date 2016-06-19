@@ -9,21 +9,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     playFlag = false;
-    tmpTime = QTime::currentTime();
-    timeCount = 0;
     updateCount = 0;
-    flagCount = 0;
 
     videoTimer = new QTimer(this);
     msgTimer = new QTimer(this);
     connect(msgTimer,SIGNAL(timeout()),this,SLOT(msgUpdate()));
     connect(videoTimer,SIGNAL(timeout()),this,SLOT(imgUpdate()));
 
-
-
     ui->openButton->hide();
-    //    ui->timeLabel->hide();
-
 
     dir = new QDir("C:/Windows/temp/temp_picture");
     picCache = new PicCache(dir);
@@ -34,13 +27,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->detailList->addItem("当前帧数");
     ui->detailList->addItem("0");
     ui->detailList->addItem("无人机坐标");
-    ui->detailList->addItem("0 0 0 0");
+    ui->detailList->addItem("");
+    ui->detailList->addItem("");
 
     red.load(":/new/prefix1/img/light-red.png");
     gray.load(":/new/prefix1/img/light-gray.png");
 
     ui->flagLabel->setPixmap(gray);
-
+    msgTimer->start(1000);
     //    QPixmap tmp;
     //    tmp.load("C:/Windows/Temp/temp_picture/00001.jpg");
     //    ui->imgLabel->setPixmap(tmp);
@@ -55,42 +49,27 @@ void MainWindow::imgUpdate()
 {
     if(updateCount < picCache->picList->count())
     {
-//        if(picCache->picList->at(updateCount).pixmap.isNull() == false)
-            ui->imgLabel->setPixmap(picCache->picList->at(updateCount).pixmap);
-
-            QPixmap tmp = picCache->picList->at(updateCount).pixmap;
-
-//            qDebug()<<tmp.isNull();
-//            qDebug()<<tmp.size().height()<<"x"<<tmp.size().width();
-
-
-//        qDebug()<<"缓存:"<<picCache->picList->count();
-//        qDebug()<<"刷新界面:"<<updateCount;
-        updateCount++;
-        if(picCache->picList->at(updateCount -1).flag == true)
+        ui->imgLabel->setPixmap(picCache->picList->at(updateCount).pixmap); //刷新图像
+        updateCount++;//刷新图像的编号，和list中的编号一一对应
+        if(picCache->picList->at(updateCount -1).uavFlag == true)//若发现无人机，则在文件中寻找坐标信息
         {
             infoFile = new QFile("C:\\windows\\temp\\temp_picture\\position.txt");
             infoFile->open(QFile::ReadOnly | QFile::Truncate);
-
             ui->flagLabel->setPixmap(red);
-            flagCount ++;
+            qDebug()<<picCache->picList->at(updateCount -1).uavNum;
+            QTextStream in(infoFile);
+            for(int i=0 ; i< picCache->picList->at(updateCount -1).uavNum ; i++)
+            {
+                matStr = in.readLine();
+            }
 
-
-                QTextStream in(infoFile);
-                QString str;
-                for(int i=0;i<flagCount;i++)
-                {
-                    str = in.readLine();
-//                    qDebug()<<flagCount<<"\t"<<str;
-
-                }
-                ui->detailList->item(5)->setText(str);
 
         }
         else  ui->flagLabel->setPixmap(gray);
 
     }
-//    else qDebug()<<"缓存慢于界面刷新"<<"cache:"<<picCache->picList->count();
+    //        else qDebug()<<"缓存慢于界面刷新";
+
 }
 
 void MainWindow::msgUpdate()
@@ -100,8 +79,14 @@ void MainWindow::msgUpdate()
     ui->detailList->item(1)->setText(QString::number(picCache->picList->count()));
     ui->detailList->item(3)->setText(QString::number(updateCount));
     ui->timeLabel->setText(QString::number(updateCount));
-
-
+    QString str0 = matStr.section(' ',0,0);
+    QString str1 = matStr.section(' ',1,1);
+    QString str2 = matStr.section(' ',2,2);
+    QString str3 = matStr.section(' ',3,3);
+    QString tmp = "("+str0 + "," + str1 + ") ->";
+    QString tmp2 = "("+str2 + "," + str3 + ")";
+    ui->detailList->item(5)->setText(tmp);
+    ui->detailList->item(6)->setText(tmp2);
 }
 
 void MainWindow::on_playButton_clicked()
@@ -111,15 +96,12 @@ void MainWindow::on_playButton_clicked()
     {
         ui->playButton->setIcon(QIcon(":/new/prefix1/img/play.png"));
         videoTimer->stop();
-
     }
     else
     {
         ui->playButton->setIcon(QIcon(":/new/prefix1/img/pause.png"));
-        videoTimer->start(40);
-
+        videoTimer->start(500);
     }
-
 }
 
 
@@ -127,6 +109,18 @@ void MainWindow::on_timeSlider_sliderMoved(int position)
 {
     updateCount = picCache->picList->count()/100.0*position;
     ui->timeLabel->setText(QString::number(updateCount));
-    ui->playButton->setIcon(QIcon(":/new/prefix1/img/pause.png"));
+    ui->playButton->setIcon(QIcon(":/new/prefix1/img/play.png"));
     videoTimer->stop();
+    imgUpdate();
+}
+
+void MainWindow::on_detailButton_clicked()
+{
+    static bool flag = false;
+    if(flag)
+        ui->detailButton->setIcon(QIcon(":/new/prefix1/img/details.png"));
+    else
+        ui->detailButton->setIcon(QIcon(":/new/prefix1/img/details_gray.png"));
+    flag = !flag;
+
 }

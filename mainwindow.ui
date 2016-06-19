@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1255</width>
-    <height>616</height>
+    <height>640</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,8 +29,8 @@
    <widget class="QSplitter" name="splitter">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>-5</y>
+      <x>0</x>
+      <y>10</y>
       <width>1251</width>
       <height>621</height>
      </rect>
@@ -286,9 +286,10 @@ QSlider::handle:vertical:hover {
       </font>
      </property>
      <property name="styleSheet">
-      <string notr="true">background-color: rgb(43, 46, 51);
-border-color: rgb(43, 46, 51);
-selection-color: rgb(45, 50, 54);</string>
+      <string notr="true">
+border: 1px solid rgb(124, 124, 124);
+border-radius:5px;
+background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(145, 145, 145, 255), stop:1 rgba(255, 255, 255, 255));</string>
      </property>
      <property name="resizeMode">
       <enum>QListView::Adjust</enum>
