@@ -43,6 +43,8 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+    system("taskkill /im UAV_detection.exe /f");
+
 }
 
 void MainWindow::imgUpdate()
@@ -65,7 +67,11 @@ void MainWindow::imgUpdate()
 
 
         }
-        else  ui->flagLabel->setPixmap(gray);
+        else
+            {
+            ui->flagLabel->setPixmap(gray);
+            matStr = "0 0 0 0";
+            }
 
     }
     //        else qDebug()<<"缓存慢于界面刷新";
@@ -100,7 +106,7 @@ void MainWindow::on_playButton_clicked()
     else
     {
         ui->playButton->setIcon(QIcon(":/new/prefix1/img/pause.png"));
-        videoTimer->start(500);
+        videoTimer->start(100);
     }
 }
 
