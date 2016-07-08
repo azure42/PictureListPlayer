@@ -12,6 +12,9 @@ PicCache::PicCache(QDir *dirInput)
     picList = new QList<struct pic>;
     readCount = 0;
     uavCount = 0;
+    oldFileCount = 0;
+    picHeight = 0;
+    picWidth = 0;
 }
 
 void PicCache::run()
@@ -19,7 +22,6 @@ void PicCache::run()
     //fileList是文件信息的总列表，newFileList是当前循环的差量列表
     while (1)
     {
-        int oldFileCount = 0;
         oldFileCount = dir->count();//刷新之前文件的个数
         dir->refresh();
         newFileList = dir->entryInfoList();
@@ -46,6 +48,8 @@ void PicCache::run()
                 }
                 while( tmp.pixmap.load(newFileList.at(newCount).filePath()) == false)
                     msleep(50);
+                picWidth = tmp.pixmap.width();
+                picHeight = tmp.pixmap.height();
                 tmp.uavFlag = -1;
                 picList->append(tmp);
 

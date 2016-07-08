@@ -7,5 +7,6 @@
         <file>img/play.png</file>
         <file>img/light-gray.png</file>
         <file>img/light-red.png</file>
+        <file>img/arrow.png</file>
     </qresource>
 </RCC>

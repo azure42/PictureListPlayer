@@ -18,7 +18,7 @@ class PicCache : public QThread
 public:
     PicCache(QDir *dir);
     QList<pic> *picList;
-
+    int oldFileCount,picWidth,picHeight;
 private:
     int uavCount;
     QDir *dir;

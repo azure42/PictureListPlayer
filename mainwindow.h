@@ -9,7 +9,7 @@
 #include <QDebug>
 #include <QPixmap>
 #include <QFile>
-
+#include <QFileDialog>
 namespace Ui {
 class MainWindow;
 }
@@ -33,6 +33,8 @@ private slots:
 
     void on_detailButton_clicked();
 
+    void on_openButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     QTimer *videoTimer;
@@ -42,9 +44,12 @@ private:
     QDir *dir;
     QFile *infoFile;
     bool playFlag,endFlag;//playFlag表示暂停/播放，endflag表示是否到达文件末尾（逐帧播放功能）
-    QPixmap red,gray;
+    bool uavFlag;
+    QPixmap red,gray,arrow;
+    QFont numFont;
     QLabel newLabel;
     QString matStr;
+    QString dirStr;
 
 };
 
