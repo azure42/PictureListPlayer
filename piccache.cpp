@@ -47,10 +47,21 @@ void PicCache::run()
                     tmp.uavNum = -1;
                 }
                 while( tmp.pixmap.load(newFileList.at(newCount).filePath()) == false)
-                    msleep(50);
+                    msleep(200);
                 picWidth = tmp.pixmap.width();
                 picHeight = tmp.pixmap.height();
                 tmp.uavFlag = -1;
+                if((picHeight*1.0 / picWidth) == 0.5625)
+                {
+                    qDebug()<<"16:9";
+                    tmp.pixmap = tmp.pixmap.scaled(QSize(960, 540), Qt::KeepAspectRatio);
+                }
+                else
+                {
+                    tmp.pixmap = tmp.pixmap.scaled(QSize(800, 600), Qt::KeepAspectRatio);
+                    qDebug()<<(picHeight / picWidth);
+                }
+
                 picList->append(tmp);
 
             }

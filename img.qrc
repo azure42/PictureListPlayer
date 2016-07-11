@@ -8,5 +8,6 @@
         <file>img/light-gray.png</file>
         <file>img/light-red.png</file>
         <file>img/arrow.png</file>
+        <file>uav.wav</file>
     </qresource>
 </RCC>

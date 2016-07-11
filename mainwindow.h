@@ -10,6 +10,8 @@
 #include <QPixmap>
 #include <QFile>
 #include <QFileDialog>
+#include <QtMultimedia/QSound>
+
 namespace Ui {
 class MainWindow;
 }

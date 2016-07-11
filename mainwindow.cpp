@@ -1,7 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -17,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(videoTimer,SIGNAL(timeout()),this,SLOT(imgUpdate()));
 
     ui->openButton->hide();
-
+    /*
     QFileDialog fileDialog;
     dirStr = fileDialog.getExistingDirectory();
 
@@ -25,7 +24,9 @@ MainWindow::MainWindow(QWidget *parent) :
         exit(-1);
     else
         dir = new QDir(dirStr);
-
+    */
+    dir = new QDir("d:\\disposal_picture");
+    //     dir = new QDir("C:\\windows\\temp\\temp_picture");
     picCache = new PicCache(dir);
     picCache->start();
 
@@ -39,7 +40,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->detailList->addItem("视频分辨率");
     ui->detailList->addItem("0x0");//1
     ui->detailList->addItem(" ");
-    ui->detailList->addItem("已解析帧数");
+    ui->detailList->addItem("当前总帧数");
     ui->detailList->addItem("0");//4
     ui->detailList->addItem(" ");
     ui->detailList->addItem("已缓存帧数");
@@ -78,17 +79,25 @@ MainWindow::MainWindow(QWidget *parent) :
     //    QPixmap tmp;
     //    tmp.load("C:/Windows/Temp/temp_picture/00001.jpg");
     //    ui->imgLabel->setPixmap(tmp);
+    infoFile = new QFile("d:\\disposal_picture\\position.txt");
+    //    infoFile->open(QFile::ReadOnly | QIODevice::Text);
+    ui->imgLabel->setAlignment(Qt::AlignCenter);
+
+    //    UavSound = new QSound("./uav.wav");
+    //    UavSound->play();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-    system("taskkill /im UAV_detection.exe /f");
+    system("taskkill /im uav_5.exe /f");
+    system("rmdir /s /q d:\\disposal_picture");
 
 }
 
 void MainWindow::imgUpdate()
 {
+
     if(updateCount < picCache->picList->count())
     {
         ui->imgLabel->setPixmap(picCache->picList->at(updateCount).pixmap); //刷新图像
@@ -97,19 +106,26 @@ void MainWindow::imgUpdate()
         {
             if(uavFlag == false)
             {
-                QApplication::beep();
+                //                QApplication::beep();
+                QSound::play(":/new/prefix1/uav.wav");
             }//从无到有，报警
+
             uavFlag = true;
-            infoFile = new QFile("C:\\windows\\temp\\temp_picture\\position.txt");
-            infoFile->open(QFile::ReadOnly | QFile::Truncate);
+
+            //            infoFile = new QFile("d:\\disposal_picture\\position.txt");
+            //            infoFile->open(QFile::ReadOnly | QFile::Truncate);
+            infoFile->open(QFile::ReadOnly | QFile::Text);
             ui->flagLabel->setPixmap(red);
-            qDebug()<<picCache->picList->at(updateCount -1).uavNum;
+            //            qDebug()<<picCache->picList->at(updateCount -1).uavNum;
             QTextStream in(infoFile);
             for(int i=0 ; i< picCache->picList->at(updateCount -1).uavNum ; i++)
             {
                 matStr = in.readLine();
+                //                if(in.atEnd() == 1)
+                //                    qDebug() << "at end!";
+                //                qDebug() << i<<":"<< matStr;
             }
-
+            infoFile->close();
 
         }
         else
@@ -138,7 +154,7 @@ void MainWindow::msgUpdate()
     QString str1 = matStr.section(' ',1,1);
     QString str2 = matStr.section(' ',2,2);
     QString str3 = matStr.section(' ',3,3);
-    QString tmp = "("+str0 + "," + str1 + ") ->";
+    QString tmp = "("+str0 + "," + str1 + ") ";
     QString tmp2 = "("+str2 + "," + str3 + ")";
     ui->detailList->item(13)->setText(tmp);
     ui->detailList->item(14)->setText(tmp2);
